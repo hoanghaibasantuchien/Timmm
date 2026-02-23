@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Spirograph Heart - Slow Motion</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        canvas {
+            border: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="heartCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('heartCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const scale = 30; 
+        let i = 0;
+
+        // TÙY CHỈNH TỐC ĐỘ TẠI ĐÂY
+        const fps = 15; // Số khung hình trên giây (càng nhỏ càng chậm)
+        const interval = 1000 / fps;
+        let lastTime = 0;
+
+        ctx.strokeStyle = 'pink';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+
+        function getHeartX(k) {
+            return 16 * Math.pow(Math.sin(k), 3);
+        }
+
+        function getHeartY(k) {
+            return -(13 * Math.cos(k) - 5 * Math.cos(2 * k) - 2 * Math.cos(3 * k) - Math.cos(4 * k));
+        }
+
+        function draw(timestamp) {
+            if (i < 1000) {
+                // Tính toán thời gian đã trôi qua
+                const deltaTime = timestamp - lastTime;
+
+                if (deltaTime > interval) {
+                    let x = centerX + getHeartX(i) * scale;
+                    let y = centerY + getHeartY(i) * scale;
+
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+
+                    i += 1;
+                    lastTime = timestamp; // Cập nhật mốc thời gian cuối cùng
+                }
+                
+                requestAnimationFrame(draw);
+            }
+        }
+
+        // Bắt đầu vẽ
+        requestAnimationFrame(draw);
+    </script>
+</body>
+</html>
